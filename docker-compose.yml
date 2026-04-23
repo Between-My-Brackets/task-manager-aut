@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════
+#  FlowBoard — Development Docker Compose
+#  Usage: docker compose up --build
+# ═══════════════════════════════════════════════════════
+
+services:
+
+  # ── FastAPI Backend ──────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: flowboard-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=development
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-me}
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:80
+    volumes:
+      # Hot-reload: mount source code
+      - ./backend/app:/app/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # ── React Frontend (Vite dev server) ─────────────────
+  frontend:
+    image: node:20-alpine
+    container_name: flowboard-frontend
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
