@@ -37,11 +37,16 @@ describe('DashboardPage', () => {
     })
   })
 
-  it('shows a loading spinner initially', () => {
+  it('shows a loading spinner initially', async () => {
     render(<MemoryRouter><DashboardPage /></MemoryRouter>)
     // Spinner should be visible before data loads
     const spinners = document.querySelectorAll('.spinner')
     expect(spinners.length).toBeGreaterThan(0)
+    
+    // Wait for the async API call to resolve so React doesn't update state after the test finishes
+    await waitFor(() => {
+      expect(screen.getByText(/priority/i)).toBeInTheDocument()
+    })
   })
 
   it('renders priority breakdown section', async () => {

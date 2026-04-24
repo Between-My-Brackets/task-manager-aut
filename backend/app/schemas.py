@@ -1,22 +1,20 @@
 """Pydantic domain models for FlowBoard."""
 
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-
 
 # ── Enums ─────────────────────────────────────────────────────────────────────
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     TODO = "todo"
     IN_PROGRESS = "in_progress"
     DONE = "done"
 
 
-class TaskPriority(str, Enum):
+class TaskPriority(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -28,7 +26,7 @@ class TaskPriority(str, Enum):
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
-    full_name: Optional[str] = Field(None, max_length=100)
+    full_name: str | None = Field(None, max_length=100)
 
 
 class UserCreate(UserBase):
@@ -61,7 +59,7 @@ class TokenResponse(BaseModel):
 
 class BoardCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    description: Optional[str] = Field(None, max_length=500)
+    description: str | None = Field(None, max_length=500)
 
 
 class BoardOut(BoardCreate):
@@ -78,16 +76,16 @@ class BoardOut(BoardCreate):
 
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=2000)
+    description: str | None = Field(None, max_length=2000)
     status: TaskStatus = TaskStatus.TODO
     priority: TaskPriority = TaskPriority.MEDIUM
 
 
 class TaskUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = None
-    status: Optional[TaskStatus] = None
-    priority: Optional[TaskPriority] = None
+    title: str | None = Field(None, min_length=1, max_length=200)
+    description: str | None = None
+    status: TaskStatus | None = None
+    priority: TaskPriority | None = None
 
 
 class TaskOut(BaseModel):
@@ -96,7 +94,7 @@ class TaskOut(BaseModel):
     id: str
     board_id: str
     title: str
-    description: Optional[str]
+    description: str | None
     status: TaskStatus
     priority: TaskPriority
     created_at: datetime

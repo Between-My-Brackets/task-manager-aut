@@ -4,8 +4,7 @@ JWT Authentication Utilities
 Handles password hashing and JWT token creation/verification.
 """
 
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -27,14 +26,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(
     data: dict,
-    expires_delta: Optional[timedelta] = None,
+    expires_delta: timedelta | None = None,
 ) -> str:
     """
     Create a signed JWT access token.
     The payload is copied and augmented with an expiry claim.
     """
     payload = data.copy()
-    expire = datetime.now(timezone.utc) + (
+    expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
     )
     payload.update({"exp": expire})
@@ -49,7 +48,7 @@ def decode_access_token(token: str) -> dict:
     return jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
 
 
-def extract_user_id(token: str) -> Optional[str]:
+def extract_user_id(token: str) -> str | None:
     """
     Extract the subject (user ID) from a token.
     Returns None if the token is invalid.

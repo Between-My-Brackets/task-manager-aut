@@ -7,11 +7,16 @@ GET  /auth/me        — Get current authenticated user
 """
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.auth import create_access_token, get_current_user, hash_password, verify_password
+from app.auth import (
+    create_access_token,
+    get_current_user,
+    hash_password,
+    verify_password,
+)
 from app.schemas import LoginRequest, TokenResponse, UserCreate, UserOut
 from app.store import store
 
@@ -36,7 +41,7 @@ def register(payload: UserCreate) -> dict:
         "email": str(payload.email),
         "full_name": payload.full_name,
         "hashed_password": hash_password(payload.password),
-        "created_at": datetime.now(timezone.utc),
+        "created_at": datetime.now(UTC),
     }
     store.create_user(user)
     return user

@@ -8,7 +8,7 @@ DELETE /boards/{id}     — Delete a board (owner only)
 """
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -43,7 +43,7 @@ def create_board(
         "name": payload.name,
         "description": payload.description,
         "owner_id": current_user["id"],
-        "created_at": datetime.now(timezone.utc),
+        "created_at": datetime.now(UTC),
     }
     store.create_board(board)
     return _enrich_board(board)

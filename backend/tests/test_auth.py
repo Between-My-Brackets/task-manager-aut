@@ -1,6 +1,5 @@
 """Tests for authentication endpoints: /auth/register, /auth/login, /auth/me"""
 
-import pytest
 from fastapi.testclient import TestClient
 
 

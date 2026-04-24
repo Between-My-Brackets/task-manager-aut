@@ -9,8 +9,7 @@ DELETE /boards/{board_id}/tasks/{task_id}  — Delete a task
 """
 
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -34,8 +33,8 @@ def _get_board_for_user(board_id: str, user_id: str) -> dict:
 @router.get("/boards/{board_id}/tasks", response_model=list[TaskOut])
 def list_tasks(
     board_id: str,
-    status_filter: Optional[TaskStatus] = Query(None, alias="status"),
-    priority_filter: Optional[TaskPriority] = Query(None, alias="priority"),
+    status_filter: TaskStatus | None = Query(None, alias="status"),
+    priority_filter: TaskPriority | None = Query(None, alias="priority"),
     current_user: dict = Depends(get_current_user),
 ) -> list:
     """
@@ -63,7 +62,7 @@ def create_task(
     """Create a new task within the specified board."""
     _get_board_for_user(board_id, current_user["id"])
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     task = {
         "id": str(uuid.uuid4()),
         "board_id": board_id,
@@ -116,7 +115,7 @@ def update_task(
         updates["status"] = updates["status"].value
     if "priority" in updates and updates["priority"]:
         updates["priority"] = updates["priority"].value
-    updates["updated_at"] = datetime.now(timezone.utc)
+    updates["updated_at"] = datetime.now(UTC)
 
     return store.update_task(task_id, updates)
 

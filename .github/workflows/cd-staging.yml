@@ -11,7 +11,7 @@ jobs:
   # Job 1: Run tests (gate before deploy)
   # ════════════════════════════════════════════════════
   test:
-    name: 🧪 Run Tests
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -47,7 +47,7 @@ jobs:
   # Job 2: Build & Push Docker images to GHCR
   # ════════════════════════════════════════════════════
   build-and-push:
-    name: 🐳 Build & Push to GHCR
+    name: Build & Push to GHCR
     runs-on: ubuntu-latest
     needs: test
 
@@ -101,7 +101,7 @@ jobs:
   # Job 3: Deploy to Staging
   # ════════════════════════════════════════════════════
   deploy-staging:
-    name: 🚀 Deploy to Staging
+    name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build-and-push
     environment: staging
@@ -130,25 +130,25 @@ jobs:
           #
           # For this workshop, we simulate the deploy:
           # ─────────────────────────────────────────────────────────────────
-          echo "🚀 Deploying FlowBoard to STAGING environment"
-          echo "📦 Image tags:"
+          echo "Deploying FlowBoard to STAGING environment"
+          echo "Image tags:"
           echo "   backend:staging-${{ steps.meta.outputs.sha_short }}"
           echo "   frontend:staging-${{ steps.meta.outputs.sha_short }}"
           echo ""
-          echo "📋 Simulated deploy commands:"
+          echo "Simulated deploy commands:"
           echo "   docker compose -f docker-compose.prod.yml pull"
           echo "   docker compose -f docker-compose.prod.yml up -d --remove-orphans"
           echo ""
-          echo "✅ Staging deploy complete!"
+          echo "Staging deploy complete!"
           echo "   App URL: https://staging.flowboard.dev"
 
       - name: Post-deploy health check
         run: |
-          echo "🏥 Running post-deploy health check..."
+          echo "Running post-deploy health check..."
           echo "   GET https://staging.flowboard.dev/health → 200 OK"
-          echo "✅ Health check passed"
+          echo "Health check passed"
 
       - name: Notify deployment success
         run: |
-          echo "📣 Staging deployment notification would be sent here"
+          echo "Staging deployment notification would be sent here"
           echo "   (e.g., Slack webhook, email, Teams)"

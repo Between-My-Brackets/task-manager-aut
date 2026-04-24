@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { boardsApi, tasksApi } from '@/services/api'
-import type { Board, Task, TaskCreatePayload, TaskPriority, TaskStatus, TaskUpdatePayload } from '@/types'
+import type { Board, Task, TaskCreatePayload, TaskStatus, TaskUpdatePayload } from '@/types'
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
   todo: 'To Do',
@@ -107,13 +107,11 @@ function TaskModal({
 // ── Task Card ─────────────────────────────────────────────────────────────
 function TaskCard({
   task,
-  boardId,
   onEdit,
   onDelete,
   onStatusChange,
 }: {
   task: Task
-  boardId: string
   onEdit: () => void
   onDelete: () => void
   onStatusChange: (status: TaskStatus) => void
@@ -234,7 +232,6 @@ export function BoardDetailPage() {
                     <TaskCard
                       key={task.id}
                       task={task}
-                      boardId={boardId!}
                       onEdit={() => openEdit(task)}
                       onDelete={() => handleDelete(task.id)}
                       onStatusChange={(s) => handleStatusChange(task, s)}
@@ -263,7 +260,6 @@ export function BoardDetailPage() {
               <TaskCard
                 key={task.id}
                 task={task}
-                boardId={boardId!}
                 onEdit={() => openEdit(task)}
                 onDelete={() => handleDelete(task.id)}
                 onStatusChange={(s) => handleStatusChange(task, s)}
